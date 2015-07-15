@@ -1,0 +1,94 @@
+<!DOCTYPE html><html><head><title></title></head><body><script src="jquery.min.js"></script><script src="main.js"></script><script type="text/javascript">
+
+
+
+var verifyResult =  function(time, color, skipPrint){
+	return function(response){
+		var promise = function(resolve, reject){
+			if(!response.hex && !response.error) {
+				return resolve(response)
+			}
+			if(!skipPrint){
+				console.log('%cWithin '+time + ((response.error)?' (error)':'') + ' id:' +response._id, 'color: '+color);
+				if(response.error){
+					console.log(response._id)
+					console.log(response.code)
+					console.log(response.error)
+				}
+			}
+
+			reject(response);
+		}
+		return new Promise(promise);
+	}
+}
+
+var compileAndVerifyResult = function(){
+	var promise = function(resolve, reject){
+		pass()
+		.then(requestProgramCC())
+
+		.then(delay(300))
+		.then(requestResultFromResponse())
+		.then(verifyResult('300ms', 'green'))
+
+		.then(delay(200))
+		.then(requestResultFromResponse())
+		.then(verifyResult('500ms', 'green'))
+
+		.then(delay(1000))
+		.then(requestResultFromResponse())
+		.then(verifyResult('1s', 'orange'))
+
+		.then(delay(2000))
+		.then(requestResultFromResponse())
+		.then(verifyResult('3s', 'red'))
+
+		.then(delay(3000))
+		.then(requestResultFromResponse())
+		.then(verifyResult('5s', 'red'))
+
+		.then(delay(5000))
+		.then(requestResultFromResponse())
+		.then(verifyResult('10s', 'black'))
+
+		.then(delay(5000))
+		.then(requestResultFromResponse())
+		.then(verifyResult('15s', 'black'))
+
+		.then(function(response){
+			console.log('Death!', response)
+		})
+		.catch(function(respose){
+			//if(error) console.log(error)
+		})
+		resolve()
+	}
+	return new Promise(promise)
+}
+
+var run = function(){
+	if(pause){
+		pass()
+		.then(delay(1000))
+		.then(run);
+		return;
+	}
+
+	pass()
+	.then(compileAndVerifyResult)
+	.then(delay(1000/( parseFloat(getParameterByName('r')) || 1 )))
+	.then(run);
+}
+run();
+
+var pause = false;
+function toggle(){
+	pause = !pause
+}
+
+
+</script>
+
+<button onclick="toggle()">pause</button>
+</body></html>

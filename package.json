@@ -1,0 +1,16 @@
+{
+  "name": "quirkbot-compiler",
+  "version": "0.0.4",
+  "author": "Quirkbot",
+  "description": "Cloud service that compiles Quirkbot programs.",
+  "homepage": "https://github.com/Quirkbot/QuirkbotCompiler",
+  "dependencies": {
+    "promise" : "x",
+    "request" : "x",
+    "mongoose" : "x"
+    },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Quirkbot/QuirkbotCompiler.git"
+  }
+}

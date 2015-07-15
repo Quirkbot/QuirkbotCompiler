@@ -1,0 +1,9 @@
+[submodule "compiler/arduino/hardware/arduino"]
+	path = compiler/arduino/hardware/arduino
+	url = https://github.com/Quirkbot/QuirkbotArduinoHardware.git
+[submodule "compiler/arduino/libraries/Quirkbot"]
+	path = compiler/arduino/libraries/Quirkbot
+	url = https://github.com/Quirkbot/QuirkbotArduinoLibrary.git
+[submodule "compiler/arduino/hardware/tools"]
+	path = compiler/arduino/hardware/tools
+	url = https://github.com/Quirkbot/QuirkbotArduinoToolsLinux64.git

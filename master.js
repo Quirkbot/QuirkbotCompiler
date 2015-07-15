@@ -7,12 +7,6 @@ var database = require('./database');
 var cluster = require('cluster');
 
 /**
- * Setup the correct compiler toolchain
- */
-var toolchainOs = process.env.TOOLCHAIN_OS || 'linux';
-execSync('sh setup-'+toolchainOs+'.sh')
-
-/**
  * Clean up temporary directory and precompile Quirkbot header
  **/
 execSync('rm -r .tmp; mkdir .tmp');

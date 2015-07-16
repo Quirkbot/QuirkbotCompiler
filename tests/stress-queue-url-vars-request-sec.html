@@ -12,8 +12,8 @@ var verifyResult =  function(time, color, skipPrint){
 				console.log('%cWithin '+time + ((response.error)?' (error)':'') + ' id:' +response._id, 'color: '+color);
 				if(response.error){
 					console.log(response._id)
-					console.log(response.code)
-					console.log(response.error)
+					/*console.log(response.code)
+					console.log(response.error)*/
 				}
 			}
 
@@ -28,11 +28,11 @@ var compileAndVerifyResult = function(){
 		pass()
 		.then(requestProgramCC())
 
-		.then(delay(300))
+		/*.then(delay(300))
 		.then(requestResultFromResponse())
-		.then(verifyResult('300ms', 'green'))
+		.then(verifyResult('300ms', 'green'))*/
 
-		.then(delay(200))
+		.then(delay(500))
 		.then(requestResultFromResponse())
 		.then(verifyResult('500ms', 'green'))
 

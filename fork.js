@@ -15,7 +15,7 @@ var mkdir = utils.mkdir;
 var label;
 var run = function(id, code){
 	if(typeof label === 'undefined' || typeof id === 'undefined' ) return;
-	console.log('run', label, id)
+	//console.log('run', label, id)
 	var sketch = {
 		_id: id,
 		code: code

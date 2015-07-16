@@ -36,7 +36,7 @@ var compileAndVerifyResult = function(){
 		.then(requestResultFromResponse())
 		.then(verifyResult('500ms', 'green'))
 
-		.then(delay(1000))
+		.then(delay(500))
 		.then(requestResultFromResponse())
 		.then(verifyResult('1s', 'orange'))
 

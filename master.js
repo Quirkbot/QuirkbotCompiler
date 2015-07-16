@@ -13,6 +13,7 @@ execSync('rm -r .tmp; mkdir .tmp');
 execSync('cd compiler/firmware; sh prepare.sh');
 
 var numCPUs = require('os').cpus().length;
+console.log('Number of CPUs: '+ numCPUs);
 var forks = [];
 for (var i = 0; i < numCPUs; i++) {
 
@@ -27,7 +28,7 @@ for (var i = 0; i < numCPUs; i++) {
 
 			database.setReady(message.data.id, message.data.hex, message.data.error);
 
-			console.log('ask', message.data.worker)
+			//console.log('ask', message.data.worker)
 			var fork = forks[message.data.worker];
 			fork.free = true;
 			doJob(fork);
@@ -44,7 +45,7 @@ for (var i = 0; i < numCPUs; i++) {
 var doJob = function(fork){
 	database.getNext()
 	.then(function(instance){
-		console.log('do', fork.label, instance.id)
+		//console.log('do', fork.label, instance.id)
 		fork.free = false;
 		fork.process.send({
 			type: 'run',
@@ -65,7 +66,7 @@ var pushJobs = function(){
 			if(pushes >= count) return;
 			if(!fork.free) return;
 			pushes++;
-			console.log('push', fork.label)
+			//console.log('push', fork.label)
 			doJob(fork)
 		})
 	})

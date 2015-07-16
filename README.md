@@ -1,14 +1,32 @@
-# Quirkbot Compiler: Worker
+# Quirkbot Compiler
 A service that compiles queued Quirkbot programs.
 
-This service reads queued compilation requests out of a database and compiles them. It doesn't serve any content to external clients, that is done by the [Quirkbot Compiler: Server](https://github.com/Quirkbot/QuirkbotCompilerServer).
+The service is divided into 2 processes: a webserver and compiler worker.
 
-The code is optimized to run on a multi core machine. One compilation worker will be spawned for each core.
+## Webserver
+Takes in compilation requests (as c++ source code), and queues them in a database.
+
+After a program has been queued and is waiting for compilation, clients can check query the compilation status by providing the build id.
+
+*The programs will only be stored in the server for 15 seconds! Clients should request the compilation and check it's status immediately after.*
+## Compiler worker
+
+Reads queued compilation requests out of a database and compiles them. It doesn't serve any content to external clients.
+
 
 # Requirements
 - Node.js
 - NPM
 - Mongo
+
+# Supported platforms
+The service is designed to run on Linux 64bits.
+
+This is mainly because of the platform specific compilation toolchain. In case you want to run it in other platforms, simply replace the toolchain (```compiler/arduino/hardware/tools```) accordingly.
+
+### Toolchains
+- [Linux 64bits](https://github.com/Quirkbot/QuirkbotArduinoToolsLinux64) (default)
+- [Mac](https://github.com/Quirkbot/QuirkbotArduinoToolsMac)
 
 # Installation
 
@@ -26,18 +44,23 @@ $ sudo npm install
 
 # Environment variables
 
-#### ```PORT```
+### ```PORT```
 ConfigureS in which port the server will respond to.
+
 Defaults to ```8080```.
 
-#### ```MONGO_URL```
+### ```MONGO_URL```
 ConfigureS in which database the services will connect to.
+
 Defaults to ```mongodb://localhost:27017/quirkbot-compiler```.
 
-#### ```TOOLCHAIN_OS```
-Configures which OS specific toochain will be used in the compilation process.
+### ```WEB_CONCURRENCY```
+The number of forks that will be spawned for each process.
 
-Possible values are ```mac``` or ```linux```. Defaults to ```linux```.
+On Heroku, it defaults to ```[Total available memory] / WEB_MEMEORY```
+, so the best way to configure is to set ```WEB_MEMORY``` according to what is best for your dyno.
+
+If ```WEB_CONCURRENCY``` is falsey, it will default to the number of cores of the machine.
 
 # Initialization
 ### Database

@@ -12,7 +12,7 @@ var cluster = require('cluster');
 execSync('rm -r .tmp; mkdir .tmp');
 execSync('cd compiler/firmware; sh prepare.sh');
 
-var numCPUs = require('os').cpus().length;
+var numCPUs = process.env.WEB_CONCURRENCY || require('os').cpus().length;
 console.log('Number of CPUs: '+ numCPUs);
 var forks = [];
 for (var i = 0; i < numCPUs; i++) {

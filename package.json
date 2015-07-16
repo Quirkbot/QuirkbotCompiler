@@ -5,7 +5,7 @@
   "description": "Cloud service that compiles Quirkbot programs.",
   "homepage": "https://github.com/Quirkbot/QuirkbotCompiler",
   "dependencies": {
-    "promise" : "x",
+    "throng" : "x",
     "request" : "x",
     "mongoose" : "x"
     },

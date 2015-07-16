@@ -1,5 +1,6 @@
 "use strict";
 
+var throng = require('throng');
 var utils = require('./utils');
 var pass = utils.pass;
 var execute = utils.execute;
@@ -7,6 +8,8 @@ var delay = utils.delay;
 
 var http = require('http');
 var database = require('./database');
+
+
 
 /**
  * Starts the webserver
@@ -22,21 +25,26 @@ var database = require('./database');
  * the URL payload, prepended by the char 'i', eg:
  * http://{host}:{port}/i{compilation-id}
  */
-var port = process.env.PORT || 8080;
-var server = http.createServer(function (request, response) {
-	response.setHeader("Access-Control-Allow-Origin", "*");
+var start = function () {
+	var port = process.env.PORT || 8080;
+	var server = http.createServer(function (request, response) {
+		response.setHeader("Access-Control-Allow-Origin", "*");
 
-	if(request.url.charAt(1) === 'i'){
-		resultResquest(request, response);
-	}
-	else{
-		queueRequest(request, response);
-	}
-});
-setTimeout(function(){
+		if(request.url.charAt(1) === 'i'){
+			resultResquest(request, response);
+		}
+		else{
+			queueRequest(request, response);
+		}
+	});
 	server.listen(port);
 	console.log('Serving on port '+port);
+}
+throng(start, {
+  workers: process.env.WEB_CONCURRENCY || require('os').cpus().length,
+  lifetime: Infinity
 });
+
 
 /**
  * Compilation queue handle

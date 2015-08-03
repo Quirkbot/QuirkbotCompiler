@@ -631,6 +631,14 @@ ifeq ($(strip $(NO_CORE)),)
         ifndef USB_PID
             USB_PID = $(call PARSE_BOARD,$(BOARD_TAG),build.pid)
         endif
+
+		ifndef USB_PRODUCT
+            USB_PRODUCT = $(call PARSE_BOARD,$(BOARD_TAG),build.usb_product)
+        endif
+
+		ifndef USB_MANUFACTURER
+            USB_MANUFACTURER = $(call PARSE_BOARD,$(BOARD_TAG),build.usb_manufacturer)
+        endif
     endif
 
     # normal programming info
@@ -1034,7 +1042,7 @@ CPPFLAGS += $(OPTIMIZATION_FLAGS)
 
 # USB IDs for the Caterina devices like leonardo or micro
 ifneq ($(CATERINA),)
-    CPPFLAGS += -DUSB_VID=$(USB_VID) -DUSB_PID=$(USB_PID)
+    CPPFLAGS += -DUSB_VID=$(USB_VID) -DUSB_PID=$(USB_PID) -DUSB_PRODUCT=$(USB_PRODUCT) -DUSB_MANUFACTURER=$(USB_MANUFACTURER)
 endif
 
 ifndef CFLAGS_STD

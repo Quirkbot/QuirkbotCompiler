@@ -78,3 +78,25 @@ Start the compiler worker
 ```
 $ node compiler.js
 ```
+# Updating
+### Quirkbot Board
+Update the submodule with:
+```
+$ cd compiler/arduino/hardware/arduino
+$ git fetch origin
+$ git merge origin/master
+$ cd ..
+$ git add arduino
+$ git commit -m "Updated Quirkbot Arduino Hardware"
+```
+
+### Quirkbot Library
+Update the submodule with:
+```
+$ cd compiler/arduino/libraries/Quirkbot
+$ git fetch origin
+$ git merge origin/master
+$ cd ..
+$ git add arduino
+$ git commit -m "Updated Quirkbot Arduino Library"
+```

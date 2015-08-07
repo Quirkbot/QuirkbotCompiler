@@ -1060,7 +1060,7 @@ else
 endif
 
 CFLAGS        += $(CFLAGS_STD)
-CXXFLAGS      += -fno-exceptions $(CXXFLAGS_STD) -pipe
+CXXFLAGS      += -fno-exceptions -fno-threadsafe-statics $(CXXFLAGS_STD) -pipe
 ASFLAGS       += -x assembler-with-cpp
 LDFLAGS       += -$(MCU_FLAG_NAME)=$(MCU) -Wl,--gc-sections -O$(OPTIMIZATION_LEVEL)
 SIZEFLAGS     ?= --mcu=$(MCU) -C

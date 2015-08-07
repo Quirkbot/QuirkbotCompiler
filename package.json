@@ -7,7 +7,8 @@
   "dependencies": {
     "throng" : "x",
     "request" : "x",
-    "mongoose" : "x"
+    "mongoose" : "x",
+    "line-by-line" : "x"
     },
   "repository": {
     "type": "git",

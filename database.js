@@ -112,7 +112,7 @@ exports.extract = function(id){
 	return new Promise(promise);
 }
 exports.clearOld = function(interval){
-	interval = interval || 15000;
+	interval = interval || 300000;
 	var promise = function(resolve, reject){
 		Model.where('createdAt').lte(Date.now() - interval)
 		.remove(function(error){

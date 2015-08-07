@@ -5,12 +5,43 @@ var pass = utils.pass;
 var execSync = require('child_process').execSync;
 var database = require('./database');
 var cluster = require('cluster');
+var boardSettings = require('./boardSettings').settings;
+
 
 /**
- * Clean up temporary directory and precompile Quirkbot header
+ * Clean up temporary directory
  **/
 execSync('rm -r .tmp; mkdir .tmp');
-execSync('cd compiler/firmware; sh prepare.sh');
+/**
+ * Precompile Quirkbot header
+ **/
+execSync('cd compiler/firmware; make clean; make;');
+execSync(
+	'compiler/arduino/hardware/tools/avr/bin/avr-g++ '+
+	'-ffunction-sections ' +
+	'-fno-exceptions ' +
+	'-fdata-sections ' +
+	'-fno-threadsafe-statics ' +
+	'-Os ' +
+	'-MMD ' +
+	'-mmcu='+boardSettings['quirkbot.build.mcu']+' ' +
+	'-DF_CPU='+boardSettings['quirkbot.build.f_cpu']+' ' +
+	'-DARDUINO_'+boardSettings['quirkbot.build.board']+' ' +
+	'-DARDUINO=10606 ' +
+	'-DARDUINO_ARCH_AVR ' +
+	'-DUSB_VID='+boardSettings['quirkbot.build.vid']+' ' +
+	'-DUSB_PID='+boardSettings['quirkbot.build.pid']+' ' +
+	'-DUSB_MANUFACTURER='+boardSettings['quirkbot.build.usb_manufacturer']+' ' +
+	'-DUSB_PRODUCT='+boardSettings['quirkbot.build.usb_product']+' ' +
+	'-D__PROG_TYPES_COMPAT__ ' +
+	((boardSettings['quirkbot.build.core']) ?
+		'-Icompiler/arduino/hardware/arduino/avr/cores/'+boardSettings['quirkbot.build.core']+' ' : '') +
+	((boardSettings['quirkbot.build.variant']) ?
+		'-Icompiler/arduino/hardware/arduino/avr/variants/'+boardSettings['quirkbot.build.variant']+' ' : '') +
+	'-Icompiler/arduino/libraries/Quirkbot ' +
+	'compiler/arduino/libraries/Quirkbot/Quirkbot.h ' +
+	'-o compiler/firmware/build-quirkbot/libs/Quirkbot/Quirkbot.h.gch'
+);
 
 var numCPUs = process.env.WEB_CONCURRENCY || require('os').cpus().length;
 console.log('Number of CPUs: '+ numCPUs);
@@ -25,7 +56,6 @@ for (var i = 0; i < numCPUs; i++) {
 
 	fork.process.on('message', function(message) {
 		if(message.type == 'success'){
-
 			database.setReady(message.data.id, message.data.hex, message.data.error);
 
 			//console.log('ask', message.data.worker)

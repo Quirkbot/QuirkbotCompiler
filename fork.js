@@ -116,15 +116,15 @@ var compile = function(sketch){
 		pass()
 		.then(execute(
 			'compiler/arduino/hardware/tools/avr/bin/avr-g++ ' +
-			'-w ' +
-			'-x ' +
-			'c++ ' +
+			'-x c++ ' +
 			'-c ' +
+			'-g ' +
+			'-Os ' +
+			'-w ' +
 			'-ffunction-sections ' +
 			'-fno-exceptions ' +
 			'-fdata-sections ' +
 			'-fno-threadsafe-statics ' +
-			'-Os ' +
 			'-MMD ' +
 			'-mmcu='+boardSettings['quirkbot.build.mcu']+' ' +
 			'-DF_CPU='+boardSettings['quirkbot.build.f_cpu']+' ' +
@@ -135,7 +135,6 @@ var compile = function(sketch){
 			'-DUSB_PID='+boardSettings['quirkbot.build.pid']+' ' +
 			'-DUSB_MANUFACTURER='+boardSettings['quirkbot.build.usb_manufacturer']+' ' +
 			'-DUSB_PRODUCT='+boardSettings['quirkbot.build.usb_product']+' ' +
-			'-D__PROG_TYPES_COMPAT__ ' +
 			'-Icompiler/firmware/build-quirkbot/libs/Quirkbot ' +
 			'.tmp/'+sketch._id+'.ino ' +
 			'-o .tmp/'+sketch._id+'.o'
@@ -154,11 +153,11 @@ var link = function(sketch){
 			'compiler/arduino/hardware/tools/avr/bin/avr-gcc ' +
 			'-mmcu='+boardSettings['quirkbot.build.mcu']+' ' +
 			'-Wl,--gc-sections ' +
+			'-w ' +
 			'-Os ' +
 			'-o .tmp/'+sketch._id+'.elf ' +
 			'.tmp/'+sketch._id+'.o ' +
 			'compiler/firmware/build-quirkbot/libcore.a  ' +
-			'-lc ' +
 			'-lm'
 		))
 		.then(function(){

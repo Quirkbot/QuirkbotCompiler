@@ -14,9 +14,9 @@ var database = require('./database');
 /**
  * Starts the webserver
  *
- * The webserver will act on 2 types of request. One that includes the program
- * source code to be added to the compilation queue, and one that checks for the
- * result of the compilation process.
+ * The webserver will act on 3 types of request. One that includes the program
+ * source code to be added to the compilation queue, one that checks for the
+ * result of the compilation process, and one for generic config retrival
  *
  * The source code should be provided direcly as the URL payload, eg:
  * http://{host}:{port}/{url-encoded-source-code}
@@ -24,6 +24,10 @@ var database = require('./database');
  * The compilation result should be requested by providing the compilation id as
  * the URL payload, prepended by the char 'i', eg:
  * http://{host}:{port}/i{compilation-id}
+*
+ * Generic configs should be requested by providing the config key
+ * the URL payload, prepended by the char 'c', eg:
+ * http://{host}:{port}/c{config-key}
  */
 var start = function () {
 	var port = process.env.PORT || 8080;
@@ -31,7 +35,10 @@ var start = function () {
 		response.setHeader("Access-Control-Allow-Origin", "*");
 
 		if(request.url.charAt(1) === 'i'){
-			resultResquest(request, response);
+			resultRequest(request, response);
+		}
+		else if(request.url.charAt(1) === 'c'){
+			configRequest(request, response);
 		}
 		else{
 			queueRequest(request, response);
@@ -134,7 +141,7 @@ var create = function(sketch){
  * On error, a response with status code 403 will be provided, alongside with
  * the compiled error message.
  */
-var resultResquest = function(request, response){
+var resultRequest = function(request, response){
 
 	var sketch = {
 		_id: request.url.substr(2)
@@ -166,7 +173,30 @@ var getResult = function(sketch){
 	}
 	return new Promise(promise)
 }
-
+/**
+ * Config handle
+ *
+ * Extracts the key out of the request URL payload, and pipes it to the result
+ * request process
+ *
+ * On success, a response with status code 200 will be provided, alongside with
+ * config object
+ *
+ * On error, a response with status code 403 will be provided, alongside with
+ * an compiled error message.
+ */
+var configRequest = function(request, response){
+	var key = request.url.substr(2);
+	database.getConfig(key)
+	.then(function(config){
+		response.writeHead(200, {'Content-Type': 'application/json'});
+		response.end(JSON.stringify(config));
+	})
+	.catch(function(error){
+		response.writeHead(403, {'Content-Type': 'application/json'});
+		response.end(JSON.stringify(error));
+	})
+}
 /**
  * Recursive Database cleanup routine
  *

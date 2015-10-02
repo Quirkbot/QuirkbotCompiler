@@ -17,7 +17,8 @@ var connectMongoose = function(url){
 }
 connectMongoose(mongooseUrl);
 
-var Schema = new mongoose.Schema({
+// Model to store programs
+var ProgramSchema = new mongoose.Schema({
 	createdAt: {
 		type: Date,
 		default: Date.now
@@ -40,12 +41,13 @@ var Schema = new mongoose.Schema({
 		default: false
 	}
 });
-var Model = mongoose.model('Model', Schema);
+var ProgramModel = mongoose.model('ProgramModel', ProgramSchema);
+
 
 
 exports.create = function(code){
 	var promise = function(resolve, reject){
-		var instance = new Model({
+		var instance = new ProgramModel({
 			code: code
 		});
 		instance.save(function(error){
@@ -57,7 +59,7 @@ exports.create = function(code){
 }
 exports.countPending = function(){
 	var promise = function(resolve, reject){
-		Model.count({ pending: true, ready: false }, function (error, count) {
+		ProgramModel.count({ pending: true, ready: false }, function (error, count) {
 			if(error) resolve(0);
 			else resolve(count)
 		});
@@ -66,7 +68,7 @@ exports.countPending = function(){
 }
 exports.getNext = function(){
 	var promise = function(resolve, reject){
-		Model.findOneAndUpdate(
+		ProgramModel.findOneAndUpdate(
 			{pending: true},
 			{pending: false},
 			{
@@ -84,7 +86,7 @@ exports.getNext = function(){
 }
 exports.setReady = function(id, hex, error){
 	var promise = function(resolve, reject){
-		Model.findByIdAndUpdate(
+		ProgramModel.findByIdAndUpdate(
 			id,
 			{
 				ready: true,
@@ -99,7 +101,7 @@ exports.setReady = function(id, hex, error){
 }
 exports.extract = function(id){
 	var promise = function(resolve, reject){
-		Model.findById(
+		ProgramModel.findById(
 			id,
 			function (error, instance) {
 				if(!error && instance){
@@ -114,7 +116,7 @@ exports.extract = function(id){
 exports.clearOld = function(interval){
 	interval = interval || 300000;
 	var promise = function(resolve, reject){
-		Model.where('createdAt').lte(Date.now() - interval)
+		ProgramModel.where('createdAt').lte(Date.now() - interval)
 		.remove(function(error){
 			if(error) reject(error);
 			else resolve();
@@ -124,10 +126,73 @@ exports.clearOld = function(interval){
 }
 exports.truncate = function(id){
 	var promise = function(resolve, reject){
-		Model.remove({}, function(error) {
+		ProgramModel.remove({}, function(error) {
 			if(error) reject(error);
 			else resolve();
 		});
+	}
+	return new Promise(promise);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Model to store generic keypar value
+var ConfigSchema = new mongoose.Schema({
+	key: {
+		type: String
+	},
+	value: {
+		type: String
+	}
+});
+var ConfigModel = mongoose.model('ConfigModel', ConfigSchema);
+
+exports.setConfig = function(key, value){
+	var promise = function(resolve, reject){
+		ConfigModel.findOneAndUpdate(
+			{
+				key: key
+			},
+			{
+				key: key,
+				value: value
+			},
+			function (error, instance) {
+				if(!error && instance){
+					resolve(instance);
+				}
+				else {
+					var instance = new ConfigModel({
+						key: key,
+						value: value
+					});
+					instance.save(function(error){
+						if(error) console.log(error)
+					});
+					resolve(instance);
+				}
+			}
+		)
+	}
+	return new Promise(promise);
+}
+
+exports.getConfig = function(key){
+	var promise = function(resolve, reject){
+		ConfigModel.findOne(
+			{
+				key: key
+			},
+			function (error, instance) {
+				if(!error && instance){
+					resolve(instance);
+				}
+				else {
+					console.log(error)
+					reject(error);
+				}
+			}
+		)
 	}
 	return new Promise(promise);
 }

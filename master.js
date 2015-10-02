@@ -18,11 +18,13 @@ execSync('rm -r .tmp; mkdir .tmp');
 execSync('cd compiler/firmware; make clean; make;');
 execSync(
 	'compiler/arduino/hardware/tools/avr/bin/avr-g++ '+
+	'-g ' +
+	'-Os ' +
+	'-w ' +
 	'-ffunction-sections ' +
 	'-fno-exceptions ' +
 	'-fdata-sections ' +
 	'-fno-threadsafe-statics ' +
-	'-Os ' +
 	'-MMD ' +
 	'-mmcu='+boardSettings['quirkbot.build.mcu']+' ' +
 	'-DF_CPU='+boardSettings['quirkbot.build.f_cpu']+' ' +
@@ -33,7 +35,6 @@ execSync(
 	'-DUSB_PID='+boardSettings['quirkbot.build.pid']+' ' +
 	'-DUSB_MANUFACTURER='+boardSettings['quirkbot.build.usb_manufacturer']+' ' +
 	'-DUSB_PRODUCT='+boardSettings['quirkbot.build.usb_product']+' ' +
-	'-D__PROG_TYPES_COMPAT__ ' +
 	((boardSettings['quirkbot.build.core']) ?
 		'-Icompiler/arduino/hardware/arduino/avr/cores/'+boardSettings['quirkbot.build.core']+' ' : '') +
 	((boardSettings['quirkbot.build.variant']) ?

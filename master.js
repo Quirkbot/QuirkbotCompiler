@@ -2,6 +2,7 @@
 
 var utils = require('./utils');
 var pass = utils.pass;
+var readFile = utils.readFile;
 var execSync = require('child_process').execSync;
 var database = require('./database');
 var cluster = require('cluster');
@@ -13,9 +14,20 @@ var boardSettings = require('./boardSettings').settings;
  **/
 execSync('rm -r .tmp; mkdir .tmp');
 /**
- * Precompile Quirkbot header
+ * Compile the reset firmware and save the hex to database
  **/
 execSync('cd compiler/firmware; make clean; make;');
+pass()
+.then(readFile('compiler/firmware/build-quirkbot/firmware.hex'))
+.then(function (hex) {
+	database.setConfig('firmware-reset',hex);
+})
+.catch(function (error) {
+	console.log('Error saving reset firmware.', error);
+})
+/**
+ * Precompile Quirkbot header
+ **/
 execSync(
 	'compiler/arduino/hardware/tools/avr/bin/avr-g++ '+
 	'-g ' +

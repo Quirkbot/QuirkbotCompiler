@@ -103,7 +103,7 @@ var clear = function(sketch){
 var create = function(sketch){
 	var promise = function(resolve, reject){
 		pass()
-		.then(writeFile('.tmp/' +sketch._id + '.ino', sketch.code)())
+		.then(writeFile('.tmp/' +sketch._id + '.ino', sketch.code + '\nConverter ___converter___;')())
 		.then(function(){
 			resolve(sketch)
 		})

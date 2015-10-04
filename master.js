@@ -14,7 +14,26 @@ var boardSettings = require('./boardSettings').settings;
  **/
 execSync('rm -r .tmp; mkdir .tmp');
 /**
- * Compile the reset firmware and save the hex to database
+ * Save configs regarding the library and hardware info
+ **/
+pass()
+.then(readFile('compiler/arduino/libraries/Quirkbot/library.properties'))
+.then(function (info) {
+	database.setConfig('library-info',info);
+})
+.catch(function (error) {
+	console.log('Error saving library-info.', error);
+})
+pass()
+.then(readFile('compiler/arduino/hardware/arduino/avr/version.txt'))
+.then(function (info) {
+	database.setConfig('hardware-info',info);
+})
+.catch(function (error) {
+	console.log('Error saving hardware-info.', error);
+})
+/**
+ * Compile the reset firmware and save the hex to the config database
  **/
 execSync('cd compiler/firmware; make clean; make;');
 pass()

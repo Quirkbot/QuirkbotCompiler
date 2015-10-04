@@ -34,7 +34,11 @@ var start = function () {
 	var server = http.createServer(function (request, response) {
 		response.setHeader("Access-Control-Allow-Origin", "*");
 
-		if(request.url.charAt(1) === 'i'){
+
+		if(request.url.length === 1){
+			indexRequest(request, response);
+		}
+		else if(request.url.charAt(1) === 'i'){
 			resultRequest(request, response);
 		}
 		else if(request.url.charAt(1) === 'c'){
@@ -52,7 +56,38 @@ throng(start, {
   lifetime: Infinity
 });
 
+/**
+ * Index
+ *
+ * Provides meta info about the compiler
+ */
+var indexRequest = function(request, response){
+	response.writeHead(200, {'Content-Type': 'application/json'});
+	response.end(JSON.stringify({
+		message: 'Quirkbot compiler',
+		endpoints:[
+			{
+				'/{source-code}': 'Queues code for compilation'
+			},
+			{
+				'/i{compilation-id}': 'Retrieves info of an ongoing compilation.'
+			},
+			{
+				'/c{config-key}': 'Retrieves value of a generic configuration by key.'
+			},
+			{
+				'/cfirmware-reset': 'A valid HEX that will reset the Quirkbot to the factory settings.'
+			},
+			{
+				'/clibrary-info': 'The content of the library.properties of the current Quirkbot library.'
+			},
+			{
+				'/hardware-info': 'The content of the version.txt of the current Quirkbot board definition.'
+			}
+		]
 
+	}));
+}
 /**
  * Compilation queue handle
  *

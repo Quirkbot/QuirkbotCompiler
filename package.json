@@ -1,6 +1,6 @@
 {
   "name": "quirkbot-compiler",
-  "version": "0.0.4",
+  "version": "0.1.3",
   "author": "Quirkbot",
   "description": "Cloud service that compiles Quirkbot programs.",
   "homepage": "https://github.com/Quirkbot/QuirkbotCompiler",
